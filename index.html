@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darkroom — Image Converter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-name">Darkroom</span>
+    </div>
+    <p class="brand-tag">local image conversion — nothing leaves your browser</p>
+  </header>
+
+  <nav class="stations" role="tablist">
+    <button class="station active" data-station="png-jpg" role="tab" aria-selected="true">
+      <span class="station-label">PNG → JPG</span>
+    </button>
+    <button class="station" data-station="jpg-pdf" role="tab" aria-selected="false">
+      <span class="station-label">JPG → PDF</span>
+    </button>
+    <button class="station" data-station="resize" role="tab" aria-selected="false">
+      <span class="station-label">Resize to Target Size</span>
+    </button>
+  </nav>
+
+  <main class="stage">
+
+    <!-- STATION 1: PNG -> JPG -->
+    <section class="panel active" id="png-jpg" role="tabpanel">
+      <div class="panel-head">
+        <h2>PNG → JPG</h2>
+        <p>Flattens transparency onto white and re-encodes as JPEG.</p>
+      </div>
+
+      <div class="dropzone" id="dz-pngjpg">
+        <input type="file" id="input-pngjpg" accept="image/png" hidden>
+        <div class="dz-inner">
+          <span class="dz-icon">⇩</span>
+          <p class="dz-text">Drop a PNG here, or <span class="dz-link">browse</span></p>
+        </div>
+      </div>
+
+      <div class="controls" id="controls-pngjpg" hidden>
+        <label class="slider-row">
+          <span class="slider-label">Quality</span>
+          <input type="range" id="quality-pngjpg" min="10" max="100" value="90">
+          <span class="slider-value" id="quality-pngjpg-val">90%</span>
+        </label>
+      </div>
+
+      <div class="result" id="result-pngjpg" hidden>
+        <div class="preview">
+          <img id="preview-pngjpg" alt="Converted preview">
+        </div>
+        <div class="meter">
+          <div class="meter-row">
+            <span>Original</span><span id="size-before-pngjpg">—</span>
+          </div>
+          <div class="meter-row accent">
+            <span>Converted</span><span id="size-after-pngjpg">—</span>
+          </div>
+        </div>
+        <a class="btn-download" id="download-pngjpg" download>Download JPG</a>
+      </div>
+    </section>
+
+    <!-- STATION 2: JPG -> PDF -->
+    <section class="panel" id="jpg-pdf" role="tabpanel">
+      <div class="panel-head">
+        <h2>JPG → PDF</h2>
+        <p>Wraps one or more JPEGs into a single PDF, one page per image.</p>
+      </div>
+
+      <div class="dropzone" id="dz-jpgpdf">
+        <input type="file" id="input-jpgpdf" accept="image/jpeg" multiple hidden>
+        <div class="dz-inner">
+          <span class="dz-icon">⇩</span>
+          <p class="dz-text">Drop JPGs here, or <span class="dz-link">browse</span></p>
+        </div>
+      </div>
+
+      <div class="controls" id="controls-jpgpdf" hidden>
+        <ul class="file-list" id="filelist-jpgpdf"></ul>
+        <label class="slider-row">
+          <span class="slider-label">Page fit</span>
+          <select id="fit-jpgpdf">
+            <option value="fit">Fit image to page (A4)</option>
+            <option value="image">Page size = image size</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="result" id="result-jpgpdf" hidden>
+        <div class="meter">
+          <div class="meter-row">
+            <span>Pages</span><span id="pages-jpgpdf">—</span>
+          </div>
+          <div class="meter-row accent">
+            <span>PDF size</span><span id="size-jpgpdf">—</span>
+          </div>
+        </div>
+        <a class="btn-download" id="download-jpgpdf" download>Download PDF</a>
+      </div>
+    </section>
+
+    <!-- STATION 3: Resize to target size -->
+    <section class="panel" id="resize" role="tabpanel">
+      <div class="panel-head">
+        <h2>Resize to Target Size</h2>
+        <p>Compresses and, if needed, downsizes an image until it fits your target file size.</p>
+      </div>
+
+      <div class="dropzone" id="dz-resize">
+        <input type="file" id="input-resize" accept="image/png, image/jpeg" hidden>
+        <div class="dz-inner">
+          <span class="dz-icon">⇩</span>
+          <p class="dz-text">Drop a PNG or JPG here, or <span class="dz-link">browse</span></p>
+        </div>
+      </div>
+
+      <div class="controls" id="controls-resize" hidden>
+        <label class="slider-row">
+          <span class="slider-label">Target size</span>
+          <input type="number" id="target-value" min="1" step="1" value="200" class="target-input">
+          <select id="target-unit">
+            <option value="KB" selected>KB</option>
+            <option value="MB">MB</option>
+          </select>
+        </label>
+        <button class="btn-run" id="run-resize">Compress to target</button>
+      </div>
+
+      <div class="result" id="result-resize" hidden>
+        <div class="preview">
+          <img id="preview-resize" alt="Resized preview">
+        </div>
+        <div class="meter">
+          <div class="meter-row">
+            <span>Original</span><span id="size-before-resize">—</span>
+          </div>
+          <div class="meter-row accent">
+            <span>Result</span><span id="size-after-resize">—</span>
+          </div>
+          <div class="meter-row">
+            <span>Dimensions</span><span id="dims-resize">—</span>
+          </div>
+          <div class="meter-row">
+            <span>Status</span><span id="status-resize">—</span>
+          </div>
+        </div>
+        <a class="btn-download" id="download-resize" download>Download Image</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p>Runs entirely client-side via the Canvas API<span id="pdf-credit"> and jsPDF</span>.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
